@@ -107,6 +107,36 @@
 
 ---
 
+### 📓 [05-task-execution-flow.md](./05-task-execution-flow.md)
+**対象読者**: Roo Codeの全体動作を理解したい開発者
+
+**内容**:
+- タスク実行の全体フロー
+  - ユーザー入力からタスク完了まで
+  - メインの実行ループ（initiateTaskLoop）
+  - LLMとの対話ループ
+  - ストリーミング処理
+  - ツール実行フロー
+- モード管理システム
+  - 5つのデフォルトモード（Architect, Code, Ask, Debug, Orchestrator）
+  - モードの役割と利用可能なツール
+  - switch_modeによる切り替え
+  - new_taskによるサブタスク委譲
+  - サブタスク完了時の親復帰
+- TODO List管理
+  - update_todo_listツールの使い方
+  - TODOリストのルール
+- Context Managementとの統合
+  - タスク実行フロー内でのContext Management呼び出し
+  - モード切り替え時のコンテキスト処理
+  - サブタスク委譲時のコンテキスト分離
+- 典型的なワークフロー例
+- デバッグとモニタリング
+
+**推奨**: Roo Codeがどのようにタスクを処理するかの全体像を理解する際に読んでください
+
+---
+
 ## クイックスタート
 
 ### 基本的な使用方法
@@ -291,22 +321,25 @@ FORCED_CONTEXT_REDUCTION_PERCENT = 75  // 強制削減時の保持率
 
 ### 初学者向け
 1. [01-overview.md](./01-overview.md) - 全体像を理解
-2. [03-api-reference.md](./03-api-reference.md) - よく使う関数を確認
-3. 実際のコードで試す
-4. [04-advanced-topics.md](./04-advanced-topics.md) - トラブルシューティング参照
+2. [05-task-execution-flow.md](./05-task-execution-flow.md) - Roo Codeの動作フローを把握
+3. [03-api-reference.md](./03-api-reference.md) - よく使う関数を確認
+4. 実際のコードで試す
+5. [04-advanced-topics.md](./04-advanced-topics.md) - トラブルシューティング参照
 
 ### 実装者向け
 1. [01-overview.md](./01-overview.md) - 設計思想を理解
-2. [02-implementation.md](./02-implementation.md) - 詳細な実装を学習
-3. ソースコードを読む（テスト含む）
-4. [03-api-reference.md](./03-api-reference.md) - API仕様確認
-5. [04-advanced-topics.md](./04-advanced-topics.md) - 最適化とエラーハンドリング
+2. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行の全体像を把握
+3. [02-implementation.md](./02-implementation.md) - 詳細な実装を学習
+4. ソースコードを読む（テスト含む）
+5. [03-api-reference.md](./03-api-reference.md) - API仕様確認
+6. [04-advanced-topics.md](./04-advanced-topics.md) - 最適化とエラーハンドリング
 
 ### システム設計者向け
 1. [01-overview.md](./01-overview.md) - アーキテクチャ全体
-2. [04-advanced-topics.md](./04-advanced-topics.md) - チェックポイント統合、テレメトリ
-3. [02-implementation.md](./02-implementation.md) - 実装の詳細
-4. パフォーマンス指標の分析
+2. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行とモード管理の仕組み
+3. [04-advanced-topics.md](./04-advanced-topics.md) - チェックポイント統合、テレメトリ
+4. [02-implementation.md](./02-implementation.md) - 実装の詳細
+5. パフォーマンス指標の分析
 
 ---
 
@@ -352,7 +385,7 @@ FORCED_CONTEXT_REDUCTION_PERCENT = 75  // 強制削減時の保持率
 
 ## 最終更新
 
-2025年12月28日
+2025年12月29日
 
 ---
 
