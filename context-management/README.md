@@ -137,6 +137,32 @@
 
 ---
 
+### 📖 [06-control-flow-explained.md](./06-control-flow-explained.md)
+**対象読者**: すべての人（高校生でも理解できるレベル）
+
+**内容**:
+- LLM（Claude）とプログラムの役割分担
+  - LLMができること・できないこと
+  - プログラムの役割
+- 基本的な仕組み：無限ループの説明
+- 具体例を使った詳しい解説
+  - 例1：簡単なタスク「typo修正」
+  - 例2：複雑なタスク「認証機能追加」
+  - 例3：さらに複雑「TypeScript変換」
+- 各ステップでの詳細な処理
+  - LLMの思考プロセス
+  - ツール実行の流れ
+  - 結果の受け渡し
+- 終了判定の3つのパターン
+- ループ継続・終了の判定フロー
+- レストランのアナロジー（わかりやすい例え話）
+- 実際のコードとシステムプロンプト
+- 練習問題
+
+**推奨**: 「次に何をするか、誰がどう決めているか」を直感的に理解したい場合に最初に読んでください
+
+---
+
 ## クイックスタート
 
 ### 基本的な使用方法
@@ -319,27 +345,36 @@ FORCED_CONTEXT_REDUCTION_PERCENT = 75  // 強制削減時の保持率
 
 ## 推奨学習パス
 
-### 初学者向け
-1. [01-overview.md](./01-overview.md) - 全体像を理解
-2. [05-task-execution-flow.md](./05-task-execution-flow.md) - Roo Codeの動作フローを把握
-3. [03-api-reference.md](./03-api-reference.md) - よく使う関数を確認
-4. 実際のコードで試す
-5. [04-advanced-topics.md](./04-advanced-topics.md) - トラブルシューティング参照
+### 完全初心者向け（プログラミング経験が浅い方）
+1. **[06-control-flow-explained.md](./06-control-flow-explained.md)** - まずここから！高校生でもわかる説明
+2. [01-overview.md](./01-overview.md) - Context Managementの基本を理解
+3. 実際にRoo Codeを使ってみる
+4. [05-task-execution-flow.md](./05-task-execution-flow.md) - より詳しい技術説明
+
+### 初学者向け（プログラミング経験あり）
+1. [06-control-flow-explained.md](./06-control-flow-explained.md) - 直感的な理解（レストランの例え話が有用）
+2. [01-overview.md](./01-overview.md) - 全体像を理解
+3. [05-task-execution-flow.md](./05-task-execution-flow.md) - Roo Codeの動作フローを把握
+4. [03-api-reference.md](./03-api-reference.md) - よく使う関数を確認
+5. 実際のコードで試す
+6. [04-advanced-topics.md](./04-advanced-topics.md) - トラブルシューティング参照
 
 ### 実装者向け
-1. [01-overview.md](./01-overview.md) - 設計思想を理解
-2. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行の全体像を把握
-3. [02-implementation.md](./02-implementation.md) - 詳細な実装を学習
-4. ソースコードを読む（テスト含む）
-5. [03-api-reference.md](./03-api-reference.md) - API仕様確認
-6. [04-advanced-topics.md](./04-advanced-topics.md) - 最適化とエラーハンドリング
+1. [06-control-flow-explained.md](./06-control-flow-explained.md) - 制御フローの本質を理解
+2. [01-overview.md](./01-overview.md) - 設計思想を理解
+3. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行の全体像を把握
+4. [02-implementation.md](./02-implementation.md) - 詳細な実装を学習
+5. ソースコードを読む（テスト含む）
+6. [03-api-reference.md](./03-api-reference.md) - API仕様確認
+7. [04-advanced-topics.md](./04-advanced-topics.md) - 最適化とエラーハンドリング
 
 ### システム設計者向け
-1. [01-overview.md](./01-overview.md) - アーキテクチャ全体
-2. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行とモード管理の仕組み
-3. [04-advanced-topics.md](./04-advanced-topics.md) - チェックポイント統合、テレメトリ
-4. [02-implementation.md](./02-implementation.md) - 実装の詳細
-5. パフォーマンス指標の分析
+1. [06-control-flow-explained.md](./06-control-flow-explained.md) - LLMとプログラムの協力体制を理解
+2. [01-overview.md](./01-overview.md) - アーキテクチャ全体
+3. [05-task-execution-flow.md](./05-task-execution-flow.md) - タスク実行とモード管理の仕組み
+4. [04-advanced-topics.md](./04-advanced-topics.md) - チェックポイント統合、テレメトリ
+5. [02-implementation.md](./02-implementation.md) - 実装の詳細
+6. パフォーマンス指標の分析
 
 ---
 
@@ -385,7 +420,7 @@ FORCED_CONTEXT_REDUCTION_PERCENT = 75  // 強制削減時の保持率
 
 ## 最終更新
 
-2025年12月29日
+2025年12月30日
 
 ---
 
