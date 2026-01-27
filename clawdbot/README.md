@@ -11,6 +11,8 @@
 | [03-implementation.md](./03-implementation.md) | コードレベルの実装詳細、主要クラス、内部API | 開発者 |
 | [04-features.md](./04-features.md) | 全機能の詳細説明、CLI コマンド、設定オプション | ユーザー/開発者 |
 | [05-extension-guide.md](./05-extension-guide.md) | プラグイン開発ガイド、API リファレンス、ベストプラクティス | プラグイン開発者 |
+| [06-context-management.md](./06-context-management.md) | コンテキスト管理、セッション、メモリ、プルーニング | 開発者 |
+| [07-long-term-memory.md](./07-long-term-memory.md) | 長期記憶システム、ベクトル埋め込み、ハイブリッド検索 | 開発者 |
 
 ## クイックナビゲーション
 
@@ -28,6 +30,12 @@
 
 ### プラグインを作りたい
 → [05-extension-guide.md](./05-extension-guide.md)
+
+### コンテキスト管理を理解したい
+→ [06-context-management.md](./06-context-management.md)
+
+### 長期記憶の仕組みを知りたい
+→ [07-long-term-memory.md](./07-long-term-memory.md)
 
 ## プロジェクト概要
 
