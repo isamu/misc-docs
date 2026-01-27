@@ -95,30 +95,63 @@ export const skills: SkillDefinition[] = [
     name: "lp-builder",
     version: "1.0.0",
     description: "対話型LPページビルダー",
-    targetTool: "html",
     trigger: ["LP", "ランディングページ", "landing page"],
 
-    steps: [
+    objective: `
+      高コンバージョンのランディングページを作成する。
+      ターゲットユーザーを理解し、最適化されたHTMLを生成する。
+    `,
+
+    tools: ["html", "exa", "generateImage"],
+
+    procedures: [
       {
-        id: "topic",
-        question: "何のLPですか？",
-        type: "text",
-        required: true,
+        phase: "gather",
+        steps: [
+          {
+            type: "question",
+            id: "topic",
+            question: "何のLPですか？",
+            required: true,
+          },
+          {
+            type: "question",
+            id: "mode",
+            question: "進め方は？",
+            options: [
+              { label: "すぐ作る", value: "quick", skipTo: "phase:generate" },
+              { label: "相談しながら", value: "guided" },
+            ],
+          },
+          {
+            type: "action",
+            tool: "exa",
+            purpose: "競合を調査",
+            args: { query: "{{topic}} ランディングページ 事例" },
+            storeAs: "research",
+          },
+        ],
       },
       {
-        id: "mode",
-        question: "進め方は？",
-        type: "choice",
-        options: [
-          { label: "すぐ作る", value: "quick" },
-          { label: "相談しながら", value: "guided" },
+        phase: "generate",
+        steps: [
+          {
+            type: "action",
+            tool: "html",
+            purpose: "LPを生成",
+            args: {
+              prompt: "{{topic}}のLPを作成。調査結果: {{research}}",
+            },
+            storeAs: "result",
+          },
         ],
       },
     ],
 
-    generate: (answers) => ({
-      prompt: `${answers.topic}のLPを作成。モード: ${answers.mode}`,
-    }),
+    output: {
+      primary: "result",
+      artifacts: ["research"],
+    },
   },
 ];
 ```
@@ -130,32 +163,57 @@ export const skills: SkillDefinition[] = [
 name: lp-builder
 version: 1.0.0
 description: 対話型LPページビルダー
-targetTool: html
 trigger:
   - LP
   - ランディングページ
   - landing page
 
-steps:
-  - id: topic
-    question: 何のLPですか？
-    type: text
-    required: true
+objective: |
+  高コンバージョンのランディングページを作成する。
+  ターゲットユーザーを理解し、最適化されたHTMLを生成する。
 
-  - id: mode
-    question: 進め方は？
-    type: choice
-    options:
-      - label: すぐ作る
-        value: quick
-        skipTo: _generate  # 残りのステップをスキップ
-      - label: 相談しながら
-        value: guided
+tools:
+  - html
+  - exa
+  - generateImage
 
-generate:
-  template: |
-    {{topic}}のLPを作成。
-    モード: {{mode}}
+procedures:
+  - phase: gather
+    steps:
+      - type: question
+        id: topic
+        question: 何のLPですか？
+        required: true
+
+      - type: question
+        id: mode
+        question: 進め方は？
+        options:
+          - label: すぐ作る
+            value: quick
+            skipTo: "phase:generate"
+          - label: 相談しながら
+            value: guided
+
+      - type: action
+        tool: exa
+        purpose: 競合を調査
+        args:
+          query: "{{topic}} ランディングページ 事例"
+        storeAs: research
+
+  - phase: generate
+    steps:
+      - type: action
+        tool: html
+        purpose: LPを生成
+        args:
+          prompt: "{{topic}}のLPを作成。調査結果: {{research}}"
+        storeAs: result
+
+output:
+  primary: result
+  artifacts: [research]
 ```
 
 ### レイヤー2: サーバー（学習・拡張）
@@ -194,11 +252,12 @@ basedOn: 1247  # 使用イベント数
 
 enhancements:
   # 使用パターンから発見された新ステップ
-  - after: topic
+  - phase: gather
+    after: topic
     add:
-      - id: industry
+      - type: question
+        id: industry
         question: 業種は？
-        type: choice
         options:
           - label: SaaS
             value: saas
@@ -217,17 +276,33 @@ enhancements:
               usageCount: 187
 
   # ユーザーの混乱に基づく質問文改善
-  - modify: mode
+  - phase: gather
+    modify: mode
     question: "作成モードを選択："
     reason: "元の文言で23%のユーザーが混乱"
 
   # ユーザーリクエストに基づく新オプション
-  - extend: mode.options
+  - phase: gather
+    extend: mode.options
     add:
       - label: テンプレートから
         value: template
         meta:
           requestedBy: 89  # ユーザー数
+
+  # 新アクション発見: 競合分析が結果を改善
+  - phase: gather
+    after: research
+    add:
+      - type: action
+        tool: browse
+        purpose: トップ競合を詳細分析
+        args:
+          url: "{{research.results[0].url}}"
+        storeAs: competitorDetail
+        meta:
+          addedReason: "競合分析を見たユーザーは満足度が40%向上"
+          usageCount: 892
 ```
 
 ### レイヤー3: Central Learning Hub

@@ -95,32 +95,63 @@ export const skills: SkillDefinition[] = [
     name: "lp-builder",
     version: "1.0.0",
     description: "Interactive LP page builder",
-    targetTool: "html",
     trigger: ["LP", "ランディングページ", "landing page"],
 
-    steps: [
+    objective: `
+      Create a high-converting landing page.
+      Understand target users and generate optimized HTML.
+    `,
+
+    tools: ["html", "exa", "generateImage"],
+
+    procedures: [
       {
-        id: "topic",
-        question: "What is the LP for?",
-        questionJa: "何のLPですか？",
-        type: "text",
-        required: true,
+        phase: "gather",
+        steps: [
+          {
+            type: "question",
+            id: "topic",
+            question: "What is the LP for?",
+            required: true,
+          },
+          {
+            type: "question",
+            id: "mode",
+            question: "How would you like to proceed?",
+            options: [
+              { label: "Quick", value: "quick", skipTo: "phase:generate" },
+              { label: "Guided", value: "guided" },
+            ],
+          },
+          {
+            type: "action",
+            tool: "exa",
+            purpose: "Research competitors",
+            args: { query: "{{topic}} landing page examples" },
+            storeAs: "research",
+          },
+        ],
       },
       {
-        id: "mode",
-        question: "How would you like to proceed?",
-        questionJa: "進め方は？",
-        type: "choice",
-        options: [
-          { label: "Quick", labelJa: "すぐ作る", value: "quick" },
-          { label: "Guided", labelJa: "相談しながら", value: "guided" },
+        phase: "generate",
+        steps: [
+          {
+            type: "action",
+            tool: "html",
+            purpose: "Generate the LP",
+            args: {
+              prompt: "Create LP for {{topic}}. Research: {{research}}",
+            },
+            storeAs: "result",
+          },
         ],
       },
     ],
 
-    generate: (answers) => ({
-      prompt: `Create an LP for ${answers.topic}. Mode: ${answers.mode}`,
-    }),
+    output: {
+      primary: "result",
+      artifacts: ["research"],
+    },
   },
 ];
 ```
@@ -132,36 +163,61 @@ export const skills: SkillDefinition[] = [
 name: lp-builder
 version: 1.0.0
 description: Interactive LP page builder
-targetTool: html
 trigger:
   - LP
   - ランディングページ
   - landing page
 
-steps:
-  - id: topic
-    question: What is the LP for?
-    questionJa: 何のLPですか？
-    type: text
-    required: true
+objective: |
+  Create a high-converting landing page.
+  Understand target users and generate optimized HTML.
 
-  - id: mode
-    question: How would you like to proceed?
-    questionJa: 進め方は？
-    type: choice
-    options:
-      - label: Quick
-        labelJa: すぐ作る
-        value: quick
-        skipTo: _generate  # Skip remaining steps
-      - label: Guided
-        labelJa: 相談しながら
-        value: guided
+tools:
+  - html
+  - exa
+  - generateImage
 
-generate:
-  template: |
-    Create an LP for {{topic}}.
-    Mode: {{mode}}
+procedures:
+  - phase: gather
+    steps:
+      - type: question
+        id: topic
+        question: What is the LP for?
+        questionJa: 何のLPですか？
+        required: true
+
+      - type: question
+        id: mode
+        question: How would you like to proceed?
+        questionJa: 進め方は？
+        options:
+          - label: Quick
+            labelJa: すぐ作る
+            value: quick
+            skipTo: "phase:generate"
+          - label: Guided
+            labelJa: 相談しながら
+            value: guided
+
+      - type: action
+        tool: exa
+        purpose: Research competitors
+        args:
+          query: "{{topic}} landing page examples"
+        storeAs: research
+
+  - phase: generate
+    steps:
+      - type: action
+        tool: html
+        purpose: Generate the LP
+        args:
+          prompt: "Create LP for {{topic}}. Research: {{research}}"
+        storeAs: result
+
+output:
+  primary: result
+  artifacts: [research]
 ```
 
 ### Layer 2: Server (Learning & Enhancement)
@@ -200,12 +256,13 @@ basedOn: 1247  # usage events
 
 enhancements:
   # New step discovered from usage patterns
-  - after: topic
+  - phase: gather
+    after: topic
     add:
-      - id: industry
+      - type: question
+        id: industry
         question: What industry?
         questionJa: 業種は？
-        type: choice
         options:
           - label: SaaS
             value: saas
@@ -226,19 +283,35 @@ enhancements:
               usageCount: 187
 
   # Improved question wording based on user confusion
-  - modify: mode
+  - phase: gather
+    modify: mode
     question: "Choose creation mode:"
     questionJa: "作成モードを選択："
     reason: "Original wording caused 23% user confusion"
 
   # New option added based on user requests
-  - extend: mode.options
+  - phase: gather
+    extend: mode.options
     add:
       - label: "Template-based"
         labelJa: "テンプレートから"
         value: template
         meta:
           requestedBy: 89  # users
+
+  # New action discovered: competitor analysis improves results
+  - phase: gather
+    after: research
+    add:
+      - type: action
+        tool: browse
+        purpose: Analyze top competitor in detail
+        args:
+          url: "{{research.results[0].url}}"
+        storeAs: competitorDetail
+        meta:
+          addedReason: "Users who saw competitor analysis had 40% higher satisfaction"
+          usageCount: 892
 ```
 
 ### Layer 3: Central Learning Hub
